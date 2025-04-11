@@ -1,5 +1,5 @@
 // netlify/functions/focused-world.js
-import { fallbackImage } from '@/assets/images/moodscroll.png';
+import { fallbackImage } from '@/public/assets/images/moodscroll.png';
 const Parser = require('rss-parser');
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
