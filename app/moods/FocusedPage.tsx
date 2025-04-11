@@ -17,7 +17,7 @@ export default function FocusedPage() {
   useEffect(() => {
     const fetchStories = async () => {
       try {
-        const res = await fetch('https://moodscroll.netlify.app/.netlify/functions/focused');
+        const res = await fetch('https://moodscroll-app.netlify.app/.netlify/functions/focused');
         const data = await res.json();
         setStories(data);
       } catch (error) {
