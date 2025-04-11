@@ -1,26 +1,45 @@
-const Parser = require('rss-parser');
+import Parser from 'rss-parser';
+
 const parser = new Parser();
 
-exports.handler = async function () {
+const sources = [
+  "https://feeds.bbci.co.uk/news/rss.xml",
+  "https://www.pbs.org/newshour/feeds/rss/headlines",
+  "https://abcnews.go.com/abcnews/topstories",
+  "https://www.aljazeera.com/xml/rss/all.xml",
+  "https://www.vox.com/rss/index.xml",
+  "https://www.cbsnews.com/latest/rss/main",
+  "https://abcnews.go.com/abcnews/usheadlines",
+  "https://feeds.content.dowjones.io/public/rss/RSSUSnews"
+];
+
+export async function handler() {
   try {
-    const feed = await parser.parseURL('https://feeds.npr.org/1001/rss.xml');
-    const stories = feed.items.slice(0, 10).map(item => ({
-      title: item.title,
-      link: item.link,
-      pubDate: item.pubDate,
-      source: 'NPR',
-      description: item.contentSnippet || '',
-    }));
+    const allItems = [];
+
+    for (const url of sources) {
+      const feed = await parser.parseURL(url);
+      const items = feed.items
+        .filter(item => item.title && item.link && item.contentSnippet)
+        .map(item => ({
+          title: item.title,
+          link: item.link,
+          summary: item.contentSnippet,
+          source: feed.title,
+          pubDate: item.pubDate,
+          image: item.enclosure?.url || null
+        }));
+      allItems.push(...items);
+    }
 
     return {
       statusCode: 200,
-      body: JSON.stringify(stories),
+      body: JSON.stringify(allItems)
     };
   } catch (err) {
-    console.error(err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to fetch RSS feed' }),
+      body: JSON.stringify({ error: err.message })
     };
   }
-};
+}
