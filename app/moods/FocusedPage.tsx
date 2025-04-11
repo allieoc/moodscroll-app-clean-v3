@@ -1,13 +1,13 @@
+// app/moods/focused.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Pressable, Linking } from 'react-native';
+import { View, Text, Linking, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { Link } from 'expo-router';
 
 type Story = {
   title: string;
   link: string;
-  summary: string;
   source: string;
-  pubDate?: string;
-  image?: string;
+  published: string;
 };
 
 export default function FocusedPage() {
@@ -15,82 +15,78 @@ export default function FocusedPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStories = async () => {
-      try {
-        const res = await fetch('https://moodscroll-app.netlify.app/.netlify/functions/focused');
-        const data = await res.json();
-        setStories(data);
-      } catch (error) {
-        console.error('Error fetching focused stories:', error);
-      } finally {
+    fetch('https://moodscroll.netlify.app/.netlify/functions/focused')
+      .then((res) => res.json())
+      .then((data) => {
+        setStories(data.stories || []);
         setLoading(false);
-      }
-    };
-
-    fetchStories();
+      })
+      .catch((err) => {
+        console.error('Error fetching focused stories:', err);
+        setLoading(false);
+      });
   }, []);
 
-  const renderItem = ({ item }: { item: Story }) => (
-    <Pressable onPress={() => Linking.openURL(item.link)} style={styles.card}>
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.source}>{item.source}</Text>
-      <Text style={styles.summary}>{item.summary}</Text>
-      {item.pubDate && <Text style={styles.date}>{new Date(item.pubDate).toLocaleDateString()}</Text>}
-    </Pressable>
-  );
-
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" />
-        <Text>Loading focused news...</Text>
-      </View>
-    );
-  }
-
   return (
-    <FlatList
-      data={stories}
-      keyExtractor={(item) => item.link}
-      renderItem={renderItem}
-      contentContainerStyle={styles.container}
-    />
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.header}>🧠 Focused News</Text>
+      {loading ? (
+        <ActivityIndicator size="large" color="#333" />
+      ) : (
+        stories.map((story, index) => (
+          <View key={index} style={styles.card}>
+            <Text style={styles.title}>{story.title}</Text>
+            <Text style={styles.meta}>
+              {story.source} · {story.published}
+            </Text>
+            <Text
+              style={styles.link}
+              onPress={() => Linking.openURL(story.link)}
+            >
+              Read more →
+            </Text>
+          </View>
+        ))
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 20,
+    backgroundColor: '#F5F5F5',
+  },
+  header: {
+    fontSize: 28,
+    fontWeight: '700',
+    marginBottom: 16,
+    color: '#1e1e1e',
   },
   card: {
-    backgroundColor: '#f3f3f3',
+    backgroundColor: '#fff',
     padding: 16,
     borderRadius: 12,
     marginBottom: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 3,
   },
   title: {
     fontSize: 18,
-    fontWeight: '700',
-  },
-  source: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#666',
-    marginTop: 4,
-  },
-  summary: {
-    fontSize: 14,
-    marginTop: 8,
+    fontWeight: '600',
+    marginBottom: 6,
     color: '#333',
   },
-  date: {
+  meta: {
     fontSize: 12,
-    marginTop: 8,
-    color: '#999',
+    color: '#888',
+    marginBottom: 8,
   },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  link: {
+    color: '#007AFF',
+    fontWeight: '500',
   },
 });
