@@ -1,5 +1,5 @@
 const Parser = require('rss-parser');
-import { fallbackImage } from '@/assets/images/moodscroll.png';
+//import { fallbackImage } from '@/assets/images/moodscroll.png';
 const parser = new Parser();
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
@@ -43,7 +43,7 @@ exports.handler = async function () {
                 imageFromOG ||
                 item.enclosure?.url ||
                 item['media:content']?.['$']?.url ||
-                fallbackImage,
+                null
             };
           })
         );

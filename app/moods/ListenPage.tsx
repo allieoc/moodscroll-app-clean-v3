@@ -1,3 +1,4 @@
+import { Story } from '@/.expo/types/story';
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 
@@ -10,7 +11,7 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 // };
 
 export default function ListenPage() {
-  const [stories, setStories] = useState<Story[any]>([]);
+  const [stories, setStories] = useState<Story[]>([]);
 
     useEffect(() => {
       fetch('/.netlify/functions/listen')
@@ -20,23 +21,7 @@ export default function ListenPage() {
     }, []);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>🎧 Tuned In</Text>
-      <Text style={styles.paragraph}>Podcasts and videos just for you.</Text>
-      <View style={styles.container}>
-            <FlatList
-              data={stories}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.card}>
-                  <Text style={styles.cardTitle}>{item.title}</Text>
-                  <Text style={styles.cardSource}>{item.source} · {new Date(item.pubDate).toLocaleDateString()}</Text>
-                  <Text style={styles.cardDescription}>{item.description}</Text>
-                </View>
-              )}
-            />
-          </View>
-    </ScrollView>
   );
 }
 

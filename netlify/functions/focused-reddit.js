@@ -8,7 +8,7 @@ const sources = [
   "https://www.reddit.com/r/worldnews/.rss",
 ];
 
-const fallbackImage = "https://upload.wikimedia.org/wikipedia/en/8/82/Reddit_logo_and_wordmark.svg"; // Reddit wordmark
+const fallbackImage = "https://www.logo.wine/a/logo/Reddit/Reddit-Logomark-Color-Logo.wine.svg"; // Reddit wordmark
 
 async function getOgImage(url) {
     try {

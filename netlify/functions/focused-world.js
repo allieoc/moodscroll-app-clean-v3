@@ -1,5 +1,5 @@
 // netlify/functions/focused-world.js
-import { fallbackImage } from '@/public/assets/images/moodscroll.png';
+//import { fallbackImage } from '@/public/moodscroll.png';
 const Parser = require('rss-parser');
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
@@ -43,7 +43,7 @@ exports.handler = async function () {
                 imageFromOG ||
                 item.enclosure?.url ||
                 item['media:content']?.['$']?.url ||
-                fallbackImage
+                null
             };
           })
         );
